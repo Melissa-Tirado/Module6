@@ -233,7 +233,7 @@ class Book {
         this.id = id;
         this.title = title;
         this.author = author;
-        this.barcode = id * 100; // barcode/ID generator
+        this.barcode = id * 1; // barcode/ID generator
         this.checkedOut = false;
     }
 
