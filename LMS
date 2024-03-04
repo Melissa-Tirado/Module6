@@ -113,7 +113,7 @@ class Catalog {
     //adding new book to catalog and assigning barcode/ID
     public void addBook(String title, String author) {
     	//assign barcode/ID to book
-        int id = books.size() + 100;
+        int id = books.size() + 1;
         //new Book object
         Book newBook = new Book(id, title, author);
         //add book to Catalog
