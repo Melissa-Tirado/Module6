@@ -1,0 +1,271 @@
+//Melissa Tirado
+//CEN3024 - Software Development 1
+//libraryManagementSystem
+//Program start, menu, interface
+
+
+
+package Module6;
+
+import java.util.Scanner;
+
+public class libraryManagementSystem {
+    public static void main(String[] args) {
+    	
+    	//create catalog object to manage books
+        Catalog catalog = new Catalog();
+        
+        //create scanner object to read user input
+        Scanner scanner = new Scanner(System.in);
+    	
+
+       
+        //main menu loop
+        while (true) {
+        	//main menu display
+            System.out.println("\nLibrary Management System");
+            System.out.println("1. Add Book");
+            System.out.println("2. Delete Book by Barcode/ID");
+            System.out.println("3. Delete Book by Title");
+            System.out.println("4. Check Out Book");
+            System.out.println("5. Check In Book");
+            System.out.println("6. Display Catalog");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+            
+            
+            //reading user input
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+            	//add new book to catalog by entering title and author
+                case 1:
+                    System.out.print("Enter book title: ");
+                    String title = scanner.nextLine();
+                    System.out.print("Enter author name: ");
+                    String author = scanner.nextLine();
+                    catalog.addBook(title, author);
+                    break;
+                //delete book by barcode/ID
+                case 2:
+                    System.out.print("Enter barcode/ID number to remove: ");
+                    int barcodeToRemove = scanner.nextInt();
+                    scanner.nextLine(); 
+                    catalog.deleteBookByBarcode(barcodeToRemove);
+                    break;
+                //delete book by title
+                case 3:
+                    System.out.print("Enter title to delete: ");
+                    String titleToRemove = scanner.nextLine();
+                    catalog.deleteBookByTitle(titleToRemove);
+                    break;
+                //check out book by book title
+                case 4:
+                    System.out.print("Enter book title to check out: ");
+                    String titleToCheckOut = scanner.nextLine();
+                    catalog.checkOutBook(titleToCheckOut);
+                    break;
+                //check in by book title
+                case 5:
+                    System.out.print("Enter book title to check in: ");
+                    String titleToCheckIn = scanner.nextLine();
+                    catalog.checkInBook(titleToCheckIn);
+                    break;
+                //display current book inventory
+                case 6:
+                    catalog.displayCatalog();
+                    break;
+                //exit program
+                case 7:
+                    System.out.println("Exiting Library Management System.");
+                    System.exit(0);
+                //user input request
+                default:
+                    System.out.println("Please enter a valid option.");
+            }
+        }
+    }
+}
+
+
+
+
+
+//Melissa Tirado
+//CEN3024 - Software Development 1
+//libraryManagementSystem
+//Catalog of books in system, adds/deletes/checks in and out books, managing catalog
+
+
+package Module6;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+
+class Catalog {
+	//array list to store books in catalog
+    private ArrayList<Book> books;
+
+    public Catalog() {
+        books = new ArrayList<>();
+    }
+    //adding new book to catalog and assigning barcode/ID
+    public void addBook(String title, String author) {
+    	//assign barcode/ID to book
+        int id = books.size() + 100;
+        //new Book object
+        Book newBook = new Book(id, title, author);
+        //add book to Catalog
+        books.add(newBook);
+        System.out.println("Book added successfully. Barcode/ID assigned: " + id);
+    }
+    
+    //deleting book from Catalog by barcode/ID
+    public void deleteBookByBarcode(int barcode) {
+        Iterator<Book> iterator = books.iterator();
+        while (iterator.hasNext()) {
+            Book book = iterator.next();
+            //find book by barcode/ID
+            if (book.getBarcode() == barcode) {
+            	//remove book from catalog
+                iterator.remove();
+                //confirmation message
+                System.out.println("Book with barcode/ID " + barcode + " deleted successfully.");
+                return;
+            }
+        }
+        //print for books not found in current Catalog
+        System.out.println("Book with barcode/ID " + barcode + " not found.");
+    }
+
+    //delete book by title
+    public void deleteBookByTitle(String title) {
+        Iterator<Book> iterator = books.iterator();
+        while (iterator.hasNext()) {
+            Book book = iterator.next();
+            //match title of book
+            if (book.getTitle().equalsIgnoreCase(title)) {
+            	//remove book from Catalog
+                iterator.remove();
+                //print confirmation message
+                System.out.println(title + "' deleted from Catalog");
+                return;
+            }
+        }
+        //print error message
+        System.out.println(title + "' not found in Catalog.");
+    }
+
+    public void checkOutBook(String title) {
+        for (Book book : books) {
+        	//locate book by title
+            if (book.getTitle().equalsIgnoreCase(title)) {
+            	//check out book if available in Catalog
+                if (!book.isCheckedOut()) {
+                    book.checkOut();
+                    //confirmation message
+                    System.out.println(title + "' checked out successfully.");
+                    return;
+                } else {
+                	//error if book already checked out
+                    System.out.println(title + "' is not available to check out.");
+                    return;
+                }
+            }
+        }
+        //error message
+        System.out.println(title + "' not found in Catalog.");
+    }
+
+    public void checkInBook(String title) {
+        for (Book book : books) {
+        	//locate book by title
+            if (book.getTitle().equalsIgnoreCase(title)) {
+            	//check in book
+                if (book.isCheckedOut()) {
+                    book.checkIn();
+                    System.out.println(title + "' checked in successfully.");
+                    return;
+                } else {
+                	//error if book is already checked in
+                    System.out.println(title + "' is already checked in.");
+                    return;
+                }
+            }
+        }
+        //error message
+        System.out.println(title + "' not found in Catalog.");
+    }
+
+    public void displayCatalog() {
+    	//catalog display -empty catalog
+        if (books.isEmpty()) {
+            System.out.println("Catalog is empty.");
+        } else {
+        	//catalog display -current inventory
+            System.out.println("Current Catalog:");
+            for (Book book : books) {
+                System.out.println(book);
+            }
+        }
+    }
+}
+
+
+
+//Melissa Tirado
+//CEN3024 - Software Development 1
+//libraryManagementSystem
+//represents book in catalog, allows for management of books
+
+
+package Module6;
+
+class Book {
+    private int id;
+    private String title;
+    private String author;
+    private int barcode;
+    private boolean checkedOut;
+
+    public Book(int id, String title, String author) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.barcode = id * 100; // barcode/ID generator
+        this.checkedOut = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getBarcode() {
+        return barcode;
+    }
+
+    public boolean isCheckedOut() {
+        return checkedOut;
+    }
+
+    public void checkOut() {
+        this.checkedOut = true;
+    }
+
+    public void checkIn() {
+        this.checkedOut = false;
+    }
+
+    public String toString() {
+        return "ID: " + id + ", Title: " + title + ", Author: " + author + ", Barcode: " + barcode + ", Checked Out: " + checkedOut;
+    }
+}
